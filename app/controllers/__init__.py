@@ -212,3 +212,25 @@ def actualizar_materia(id: int, m: Materia):
         raise HTTPException(status_code=404, detail="Materia no encontrada")
     materia.update(m.dict(exclude_unset=True))
     return materia
+
+# --- ESTADISTICAS ---
+@router.get("/estadisticas", tags=["Estadisticas"])
+def obtener_estadisticas():
+    from app import repositories as repo
+    return {
+        "total_usuarios": len(repo.db_usuarios),
+        "total_estudiantes": len(repo.db_estudiantes),
+        "total_docentes": len(repo.db_docentes),
+        "total_materias": len(repo.db_materias),
+        "total_matriculas": len(repo.db_matriculas),
+        "total_calificaciones": len(repo.db_calificaciones),
+        "total_asistencias": len(repo.db_asistencias),
+        "matriculas_por_estado": {
+            "borrador": len([m for m in repo.db_matriculas if m["estado"] == "borrador"]),
+            "pendiente": len([m for m in repo.db_matriculas if m["estado"] == "pendiente"]),
+            "activa": len([m for m in repo.db_matriculas if m["estado"] == "activa"]),
+            "rechazada": len([m for m in repo.db_matriculas if m["estado"] == "rechazada"]),
+            "completada": len([m for m in repo.db_matriculas if m["estado"] == "completada"]),
+            "anulada": len([m for m in repo.db_matriculas if m["estado"] == "anulada"])
+        }
+    }
