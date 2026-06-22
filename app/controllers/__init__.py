@@ -341,3 +341,21 @@ def matriculas_por_estado(estado: str):
         "total": len(matriculas),
         "matriculas": matriculas
     }
+    
+    @router.get("/estudiantes/{id}/resumen", tags=["Estudiantes"])
+    def resumen_academico(id: int):
+        from app import repositories as repo
+        estudiante = repo.obtener_estudiante(id)
+        if not estudiante:
+            raise HTTPException(status_code=404, detail="Estudiante no encontrado")
+        matriculas = [m for m in repo.db_matriculas if m["id_estudiante"] == id]
+        calificaciones = [c for c in repo.db_calificaciones if any(m["id"] == c["id_matricula"] for m in matriculas)]
+        promedio_general = round(sum(c["promedio"] for c in calificaciones) / len(calificaciones), 2) if calificaciones else 0
+        return {
+            "estudiante": estudiante,
+            "total_matriculas": len(matriculas),
+            "matriculas_activas": len([m for m in matriculas if m["estado"] == "activa"]),
+            "matriculas_completadas": len([m for m in matriculas if m["estado"] == "completada"]),
+            "total_calificaciones": len(calificaciones),
+            "promedio_general": promedio_general
+        }
