@@ -42,3 +42,27 @@ El proyecto sigue el patrón modelo/repositorio/servicio/controlador:
 - repositories: acceso a datos
 - services: lógica de negocio
 - controllers: endpoints REST
+
+## Enlace del Repositorio
+https://github.com/Guanxxo/T02-03-backend
+
+## Endpoints disponibles
+- GET/POST /api/usuarios
+- GET/POST /api/estudiantes
+- GET/POST /api/docentes
+- GET/POST /api/periodos
+- GET/POST /api/materias
+- GET/POST /api/matriculas
+- GET/POST /api/calificaciones
+- GET/POST /api/asistencias
+- GET /api/estadisticas
+- GET /api/estudiantes/{id}/resumen
+- GET /api/materias/{id}/resumen
+- GET /api/matriculas/{id}/asistencia
+- GET /api/matriculas/{id}/calificacion
+- PUT /api/matriculas/{id}/confirmar
+- PUT /api/matriculas/{id}/aprobar
+- PUT /api/matriculas/{id}/rechazar
+- PUT /api/matriculas/{id}/anular
+- PUT /api/matriculas/{id}/completar
+- PUT /api/matriculas/{id}/revisar
