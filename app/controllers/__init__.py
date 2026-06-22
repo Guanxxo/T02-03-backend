@@ -234,3 +234,37 @@ def obtener_estadisticas():
             "anulada": len([m for m in repo.db_matriculas if m["estado"] == "anulada"])
         }
     }
+    
+    # --- REPORTES ---
+@router.get("/matriculas/{id}/asistencia", tags=["Reportes"])
+def reporte_asistencia(id: int):
+    from app import repositories as repo
+    matricula = repo.obtener_matricula(id)
+    if not matricula:
+        raise HTTPException(status_code=404, detail="Matricula no encontrada")
+    asistencias = [a for a in repo.db_asistencias if a["id_matricula"] == id]
+    total = len(asistencias)
+    presentes = len([a for a in asistencias if a["presente"]])
+    porcentaje = round((presentes / total * 100), 2) if total > 0 else 0
+    return {
+        "id_matricula": id,
+        "total_clases": total,
+        "clases_asistidas": presentes,
+        "clases_faltadas": total - presentes,
+        "porcentaje_asistencia": porcentaje,
+        "estado": "aprobado" if porcentaje >= 70 else "reprobado"
+    }
+
+@router.get("/matriculas/{id}/calificacion", tags=["Reportes"])
+def reporte_calificacion(id: int):
+    from app import repositories as repo
+    matricula = repo.obtener_matricula(id)
+    if not matricula:
+        raise HTTPException(status_code=404, detail="Matricula no encontrada")
+    calificaciones = [c for c in repo.db_calificaciones if c["id_matricula"] == id]
+    if not calificaciones:
+        raise HTTPException(status_code=404, detail="No hay calificaciones para esta matricula")
+    return {
+        "id_matricula": id,
+        "calificaciones": calificaciones
+    }
