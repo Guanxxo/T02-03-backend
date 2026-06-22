@@ -268,3 +268,33 @@ def reporte_calificacion(id: int):
         "id_matricula": id,
         "calificaciones": calificaciones
     }
+    
+    # --- BUSQUEDAS ESPECIALES ---
+@router.get("/periodos/{id}/materias", tags=["Periodos"])
+def materias_por_periodo(id: int):
+    from app import repositories as repo
+    materias = [m for m in repo.db_materias if m["id_periodo"] == id]
+    if not materias:
+        raise HTTPException(status_code=404, detail="No hay materias para este periodo")
+    return materias
+
+@router.get("/estudiantes/{id}/matriculas", tags=["Estudiantes"])
+def matriculas_por_estudiante(id: int):
+    from app import repositories as repo
+    estudiante = repo.obtener_estudiante(id)
+    if not estudiante:
+        raise HTTPException(status_code=404, detail="Estudiante no encontrado")
+    matriculas = [m for m in repo.db_matriculas if m["id_estudiante"] == id]
+    return {
+        "estudiante": estudiante,
+        "matriculas": matriculas,
+        "total": len(matriculas)
+    }
+
+@router.get("/docentes/{id}/materias", tags=["Docentes"])
+def materias_por_docente(id: int):
+    from app import repositories as repo
+    materias = [m for m in repo.db_materias if m["id_docente"] == id]
+    if not materias:
+        raise HTTPException(status_code=404, detail="No hay materias para este docente")
+    return materias
