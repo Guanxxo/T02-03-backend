@@ -147,3 +147,40 @@ def obtener_matricula(id: int):
     if not matricula:
         raise HTTPException(status_code=404, detail="Matricula no encontrada")
     return matricula
+
+# --- ELIMINACIONES ---
+@router.delete("/usuarios/{id}", tags=["Usuarios"])
+def eliminar_usuario(id: int):
+    from app import repositories as repo
+    usuario = repo.obtener_usuario(id)
+    if not usuario:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+    repo.db_usuarios.remove(usuario)
+    return {"mensaje": "Usuario eliminado correctamente"}
+
+@router.delete("/estudiantes/{id}", tags=["Estudiantes"])
+def eliminar_estudiante(id: int):
+    from app import repositories as repo
+    estudiante = repo.obtener_estudiante(id)
+    if not estudiante:
+        raise HTTPException(status_code=404, detail="Estudiante no encontrado")
+    repo.db_estudiantes.remove(estudiante)
+    return {"mensaje": "Estudiante eliminado correctamente"}
+
+@router.delete("/materias/{id}", tags=["Materias"])
+def eliminar_materia(id: int):
+    from app import repositories as repo
+    materia = repo.obtener_materia(id)
+    if not materia:
+        raise HTTPException(status_code=404, detail="Materia no encontrada")
+    repo.db_materias.remove(materia)
+    return {"mensaje": "Materia eliminada correctamente"}
+
+@router.delete("/matriculas/{id}", tags=["Matriculas"])
+def eliminar_matricula(id: int):
+    from app import repositories as repo
+    matricula = repo.obtener_matricula(id)
+    if not matricula:
+        raise HTTPException(status_code=404, detail="Matricula no encontrada")
+    repo.db_matriculas.remove(matricula)
+    return {"mensaje": "Matricula eliminada correctamente"}
