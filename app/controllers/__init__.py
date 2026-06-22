@@ -359,3 +359,22 @@ def matriculas_por_estado(estado: str):
             "total_calificaciones": len(calificaciones),
             "promedio_general": promedio_general
         }
+        
+        @router.get("/materias/{id}/resumen", tags=["Materias"])
+        def resumen_materia(id: int):
+            from app import repositories as repo
+            materia = repo.obtener_materia(id)
+            if not materia:
+                raise HTTPException(status_code=404, detail="Materia no encontrada")
+            matriculas = [m for m in repo.db_matriculas if m["id_materia"] == id]
+            calificaciones = [c for c in repo.db_calificaciones if any(m["id"] == c["id_matricula"] for m in matriculas)]
+            promedio = round(sum(c["promedio"] for c in calificaciones) / len(calificaciones), 2) if calificaciones else 0
+            return {
+        "materia": materia,
+        "total_matriculados": len(matriculas),
+        "cupos_disponibles": materia["cupo_max"] - len(matriculas),
+        "total_calificaciones": len(calificaciones),
+        "promedio_grupo": promedio,
+        "aprobados": len([c for c in calificaciones if c["estado"] == "aprobado"]),
+        "reprobados": len([c for c in calificaciones if c["estado"] == "reprobado"])
+    }
