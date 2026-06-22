@@ -318,3 +318,26 @@ def completar_matricula(id: int):
     if matricula["estado"] != "activa":
         raise HTTPException(status_code=400, detail="Solo se pueden completar matriculas activas")
     return repo.actualizar_estado_matricula(id, "completada")
+
+@router.put("/matriculas/{id}/revisar", tags=["Matriculas"])
+def revisar_matricula(id: int):
+    from app import repositories as repo
+    matricula = repo.obtener_matricula(id)
+    if not matricula:
+        raise HTTPException(status_code=404, detail="Matricula no encontrada")
+    if matricula["estado"] != "borrador":
+        raise HTTPException(status_code=400, detail="Solo se pueden revisar matriculas en borrador")
+    return repo.actualizar_estado_matricula(id, "en_revision")
+
+@router.get("/matriculas/estado/{estado}", tags=["Matriculas"])
+def matriculas_por_estado(estado: str):
+    from app import repositories as repo
+    estados_validos = ["borrador", "en_revision", "pendiente", "activa", "rechazada", "completada", "anulada"]
+    if estado not in estados_validos:
+        raise HTTPException(status_code=400, detail=f"Estado no válido. Use uno de: {estados_validos}")
+    matriculas = [m for m in repo.db_matriculas if m["estado"] == estado]
+    return {
+        "estado": estado,
+        "total": len(matriculas),
+        "matriculas": matriculas
+    }
