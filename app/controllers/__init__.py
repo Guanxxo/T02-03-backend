@@ -114,3 +114,36 @@ def crear_asistencia(a: Asistencia):
 @router.get("/asistencias", tags=["Asistencias"])
 def listar_asistencias():
     return svc.listar_asistencias()
+
+# --- BUSQUEDAS POR ID ---
+@router.get("/usuarios/{id}", tags=["Usuarios"])
+def obtener_usuario(id: int):
+    from app import repositories as repo
+    usuario = repo.obtener_usuario(id)
+    if not usuario:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+    return usuario
+
+@router.get("/estudiantes/{id}", tags=["Estudiantes"])
+def obtener_estudiante(id: int):
+    from app import repositories as repo
+    estudiante = repo.obtener_estudiante(id)
+    if not estudiante:
+        raise HTTPException(status_code=404, detail="Estudiante no encontrado")
+    return estudiante
+
+@router.get("/materias/{id}", tags=["Materias"])
+def obtener_materia(id: int):
+    from app import repositories as repo
+    materia = repo.obtener_materia(id)
+    if not materia:
+        raise HTTPException(status_code=404, detail="Materia no encontrada")
+    return materia
+
+@router.get("/matriculas/{id}", tags=["Matriculas"])
+def obtener_matricula(id: int):
+    from app import repositories as repo
+    matricula = repo.obtener_matricula(id)
+    if not matricula:
+        raise HTTPException(status_code=404, detail="Matricula no encontrada")
+    return matricula
