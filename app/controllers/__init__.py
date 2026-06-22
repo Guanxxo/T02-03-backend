@@ -184,3 +184,31 @@ def eliminar_matricula(id: int):
         raise HTTPException(status_code=404, detail="Matricula no encontrada")
     repo.db_matriculas.remove(matricula)
     return {"mensaje": "Matricula eliminada correctamente"}
+
+# --- ACTUALIZACIONES ---
+@router.put("/usuarios/{id}", tags=["Usuarios"])
+def actualizar_usuario(id: int, u: Usuario):
+    from app import repositories as repo
+    usuario = repo.obtener_usuario(id)
+    if not usuario:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+    usuario.update(u.dict(exclude_unset=True))
+    return usuario
+
+@router.put("/estudiantes/{id}", tags=["Estudiantes"])
+def actualizar_estudiante(id: int, e: Estudiante):
+    from app import repositories as repo
+    estudiante = repo.obtener_estudiante(id)
+    if not estudiante:
+        raise HTTPException(status_code=404, detail="Estudiante no encontrado")
+    estudiante.update(e.dict(exclude_unset=True))
+    return estudiante
+
+@router.put("/materias/{id}", tags=["Materias"])
+def actualizar_materia(id: int, m: Materia):
+    from app import repositories as repo
+    materia = repo.obtener_materia(id)
+    if not materia:
+        raise HTTPException(status_code=404, detail="Materia no encontrada")
+    materia.update(m.dict(exclude_unset=True))
+    return materia
