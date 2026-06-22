@@ -298,3 +298,23 @@ def materias_por_docente(id: int):
     if not materias:
         raise HTTPException(status_code=404, detail="No hay materias para este docente")
     return materias
+
+@router.put("/matriculas/{id}/anular", tags=["Matriculas"])
+def anular_matricula(id: int):
+    from app import repositories as repo
+    matricula = repo.obtener_matricula(id)
+    if not matricula:
+        raise HTTPException(status_code=404, detail="Matricula no encontrada")
+    if matricula["estado"] != "activa":
+        raise HTTPException(status_code=400, detail="Solo se pueden anular matriculas activas")
+    return repo.actualizar_estado_matricula(id, "anulada")
+
+@router.put("/matriculas/{id}/completar", tags=["Matriculas"])
+def completar_matricula(id: int):
+    from app import repositories as repo
+    matricula = repo.obtener_matricula(id)
+    if not matricula:
+        raise HTTPException(status_code=404, detail="Matricula no encontrada")
+    if matricula["estado"] != "activa":
+        raise HTTPException(status_code=400, detail="Solo se pueden completar matriculas activas")
+    return repo.actualizar_estado_matricula(id, "completada")
