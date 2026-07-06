@@ -261,3 +261,62 @@ def test_completar_matricula():
     r = client.put("/api/matriculas/1/completar")
     assert r.status_code == 200
     assert r.json()["estado"] == "completada"
+
+# --- DOCENTES POR MATERIA ---
+def test_materias_por_docente():
+    client.post("/api/usuarios", json={"nombre": "Maria", "apellido": "Lopez", "email": "maria@gmail.com", "rol": "docente"})
+    client.post("/api/docentes", json={"id_usuario": 1, "titulo": "Magister", "especialidad": "Software"})
+    client.post("/api/materias", json={"id_docente": 1, "id_periodo": 1, "nombre": "Programacion", "codigo": "PRG01", "creditos": 4, "cupo_max": 30})
+    r = client.get("/api/docentes/1/materias")
+    assert r.status_code == 200
+
+def test_materias_por_docente_sin_materias():
+    r = client.get("/api/docentes/99/materias")
+    assert r.status_code == 404
+
+# --- PERIODOS POR MATERIA ---
+def test_materias_por_periodo():
+    client.post("/api/periodos", json={"nombre": "2026-A", "fecha_inicio": "2026-01-01", "fecha_fin": "2026-06-30"})
+    client.post("/api/materias", json={"id_docente": 1, "id_periodo": 1, "nombre": "Programacion", "codigo": "PRG01", "creditos": 4, "cupo_max": 30})
+    r = client.get("/api/periodos/1/materias")
+    assert r.status_code == 200
+
+def test_materias_por_periodo_sin_materias():
+    r = client.get("/api/periodos/99/materias")
+    assert r.status_code == 404
+
+# --- MATRICULAS POR ESTUDIANTE ---
+def test_matriculas_por_estudiante():
+    client.post("/api/usuarios", json={"nombre": "Juan", "apellido": "Chevez", "email": "juan@gmail.com", "rol": "estudiante"})
+    client.post("/api/estudiantes", json={"id_usuario": 1, "codigo": "EST001", "carrera": "Computacion", "semestre": 3})
+    r = client.get("/api/estudiantes/1/matriculas")
+    assert r.status_code == 200
+
+def test_matriculas_por_estudiante_inexistente():
+    r = client.get("/api/estudiantes/99/matriculas")
+    assert r.status_code == 404
+
+# --- CALIFICACIONES Y ASISTENCIAS ---
+def test_listar_calificaciones():
+    r = client.get("/api/calificaciones")
+    assert r.status_code == 200
+
+def test_listar_asistencias():
+    r = client.get("/api/asistencias")
+    assert r.status_code == 200
+
+def test_crear_calificacion():
+    client.post("/api/usuarios", json={"nombre": "Juan", "apellido": "Chevez", "email": "juan@gmail.com", "rol": "estudiante"})
+    client.post("/api/estudiantes", json={"id_usuario": 1, "codigo": "EST001", "carrera": "Computacion", "semestre": 3})
+    client.post("/api/materias", json={"id_docente": 1, "id_periodo": 1, "nombre": "Programacion", "codigo": "PRG01", "creditos": 4, "cupo_max": 30})
+    client.post("/api/matriculas", json={"id_estudiante": 1, "id_materia": 1, "id_periodo": 1, "fecha": "2026-01-15"})
+    r = client.post("/api/calificaciones", json={"id_matricula": 1, "nota1": 8.0, "nota2": 7.5, "examen": 9.0})
+    assert r.status_code == 200
+
+def test_crear_asistencia():
+    client.post("/api/usuarios", json={"nombre": "Juan", "apellido": "Chevez", "email": "juan@gmail.com", "rol": "estudiante"})
+    client.post("/api/estudiantes", json={"id_usuario": 1, "codigo": "EST001", "carrera": "Computacion", "semestre": 3})
+    client.post("/api/materias", json={"id_docente": 1, "id_periodo": 1, "nombre": "Programacion", "codigo": "PRG01", "creditos": 4, "cupo_max": 30})
+    client.post("/api/matriculas", json={"id_estudiante": 1, "id_materia": 1, "id_periodo": 1, "fecha": "2026-01-15"})
+    r = client.post("/api/asistencias", json={"id_matricula": 1, "fecha": "2026-01-15", "presente": True})
+    assert r.status_code == 200
