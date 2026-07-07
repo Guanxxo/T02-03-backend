@@ -66,3 +66,19 @@ https://github.com/Guanxxo/T02-03-backend
 - PUT /api/matriculas/{id}/anular
 - PUT /api/matriculas/{id}/completar
 - PUT /api/matriculas/{id}/revisar
+
+## Pruebas Unitarias
+
+Para ejecutar las pruebas:
+   python -m pytest tests/ -v
+
+Para ver la cobertura:
+   python -m pytest tests/ --cov=app --cov-report=term-missing
+
+### Resultados
+- Total de pruebas: 122
+- Cobertura total: 89%
+- models: 100%
+- repositories: 100%
+- services: 100%
+- controllers: 80%
