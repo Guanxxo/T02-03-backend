@@ -176,3 +176,47 @@ def test_service_crear_asistencia_matricula_inexistente():
     a = Asistencia(id_matricula=99, fecha=date(2026,1,15), presente=True)
     with pytest.raises(ValueError, match="La matrícula no existe"):
         svc.crear_asistencia(a)
+        
+# --- SERVICIOS FALTANTES ---
+def test_service_listar_calificaciones():
+    assert len(svc.listar_calificaciones()) == 0
+
+def test_service_listar_asistencias():
+    assert len(svc.listar_asistencias()) == 0
+
+def test_service_confirmar_matricula_inexistente():
+    with pytest.raises(ValueError, match="Matrícula no encontrada"):
+        svc.confirmar_matricula(99)
+
+def test_service_confirmar_matricula_estado_incorrecto():
+    u = Usuario(nombre="Juan", apellido="Chevez", email="juan@gmail.com", rol=RolEnum.estudiante)
+    svc.crear_usuario(u)
+    e = Estudiante(id_usuario=1, codigo="EST001", carrera="Computacion", semestre=3)
+    svc.crear_estudiante(e)
+    m = Materia(id_docente=1, id_periodo=1, nombre="Programacion", codigo="PRG01", creditos=4, cupo_max=30)
+    svc.crear_materia(m)
+    mat = Matricula(id_estudiante=1, id_materia=1, id_periodo=1, fecha=date(2026,1,15))
+    svc.crear_matricula(mat)
+    svc.confirmar_matricula(1)
+    with pytest.raises(ValueError, match="Solo se pueden confirmar"):
+        svc.confirmar_matricula(1)
+
+def test_service_aprobar_matricula_inexistente():
+    with pytest.raises(ValueError, match="Matrícula no encontrada"):
+        svc.aprobar_matricula(99)
+
+def test_service_aprobar_matricula_estado_incorrecto():
+    u = Usuario(nombre="Juan", apellido="Chevez", email="juan@gmail.com", rol=RolEnum.estudiante)
+    svc.crear_usuario(u)
+    e = Estudiante(id_usuario=1, codigo="EST001", carrera="Computacion", semestre=3)
+    svc.crear_estudiante(e)
+    m = Materia(id_docente=1, id_periodo=1, nombre="Programacion", codigo="PRG01", creditos=4, cupo_max=30)
+    svc.crear_materia(m)
+    mat = Matricula(id_estudiante=1, id_materia=1, id_periodo=1, fecha=date(2026,1,15))
+    svc.crear_matricula(mat)
+    with pytest.raises(ValueError, match="Solo se pueden aprobar"):
+        svc.aprobar_matricula(1)
+
+def test_service_rechazar_matricula_inexistente():
+    with pytest.raises(ValueError, match="Matrícula no encontrada"):
+        svc.rechazar_matricula(99)
